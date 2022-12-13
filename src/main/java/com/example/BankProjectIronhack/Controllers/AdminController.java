@@ -51,7 +51,7 @@ public class AdminController {
         return adminService.createChecking(checking);
     }
 
-//    WORKS
+//WORKS
     @PostMapping("/create-third-party")
     @ResponseStatus(HttpStatus.CREATED)
     public ThirdParty createThirdParty(@RequestBody ThirdParty thirdParty){
@@ -60,8 +60,8 @@ public class AdminController {
 
     @PostMapping("/create-savings")
     @ResponseStatus(HttpStatus.CREATED)
-    public Account createSavings(@RequestBody Savings savings){
-        return adminService.createSavings(savings);
+    public Account createSavings(@RequestBody AccountHolder user, @RequestBody BigDecimal balance,@RequestBody String secretKey){
+        return adminService.createSavings(user,balance,secretKey);
     }
 
     @PostMapping("/create-accountHolder")
@@ -70,10 +70,17 @@ public class AdminController {
         return adminService.createAccountHolder(accountHolder);
     }
 
+    @PostMapping("/account/{accountId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void modifyBalanceAccount(@RequestParam Long accountId, @RequestParam BigDecimal balance){
+        adminService.modifyBalance(accountId,balance);
+    }
+
     @DeleteMapping("/account/{accountId}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteAccount(@RequestParam Long accountId){
         adminService.deleteAccount(accountId);
     }
+
     }
 

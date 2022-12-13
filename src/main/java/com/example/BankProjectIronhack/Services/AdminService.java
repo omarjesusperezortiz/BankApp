@@ -54,9 +54,8 @@ public class AdminService {
         }
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id not found");
     }
-    public Account createSavings(Savings savings) {
-
-        return accountRepository.save(savings);
+    public Account createSavings(AccountHolder user, BigDecimal balance, String secretKey) {
+        return accountRepository.save(new Savings(balance, user, secretKey));
     }
 
     public Account createCreditCard(CreditCard creditCard) {
@@ -77,14 +76,6 @@ public class AdminService {
 
         return thirdPartyRepository.save(thirdParty);
     }
-
-    private List<Account> checkAccountBalance(AccountHolder accountHolder){
-        if(accountHolderRepository.findById(accountHolder.getId()).isPresent()){
-            return accountHolderRepository.findById(accountHolder.getId()).get().getPrimaryAccountList();
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Account Id not found");
-    }
-
 
     public void  modifyBalance(Long accountId, BigDecimal balance){
         if(accountRepository.findById(accountId).isPresent()){

@@ -4,12 +4,14 @@ import com.example.BankProjectIronhack.Models.Account.Savings;
 import com.example.BankProjectIronhack.Models.Account.StudentChecking;
 import com.example.BankProjectIronhack.Models.Users.AccountHolder;
 import com.example.BankProjectIronhack.Models.Users.Address;
+import com.example.BankProjectIronhack.Models.Users.Admin;
 import com.example.BankProjectIronhack.Models.Users.ThirdParty;
 import com.example.BankProjectIronhack.Repositories.AccountRepositories.AccountRepository;
 import com.example.BankProjectIronhack.Repositories.AccountRepositories.SavingsRepository;
 import com.example.BankProjectIronhack.Repositories.UserRepositories.AccountHolderRepository;
 import com.example.BankProjectIronhack.Repositories.UserRepositories.AdminRepository;
 import com.example.BankProjectIronhack.Repositories.UserRepositories.UserRepository;
+import com.example.BankProjectIronhack.Services.AdminService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +45,8 @@ public class AdminTest {
     SavingsRepository savingsRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    AdminService adminService;
     private MockMvc mockMvc;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -56,6 +60,7 @@ public class AdminTest {
     void tearDown() {
     }
 
+
     @Test
     public void createThirdPartyTest() throws Exception {
         ThirdParty thirdParty = new ThirdParty("asdfasdf");
@@ -64,43 +69,6 @@ public class AdminTest {
         MvcResult result = (MvcResult) mockMvc.perform(post("/create-third-party")
                 .content(bodyRequest).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isCreated()).andReturn();
         assertTrue(result.getResponse().getContentAsString().contains("hashedKey"));
-    }
-
-    @Test
-    public void createAccountHolderTest() throws Exception {
-        Address address = new Address("Carrer de Julia Portet", "Barcelona","08002");
-        AccountHolder accountHolder = new AccountHolder("Omar", "password",
-                address,  LocalDate.of(1993, 7, 26));
-        String bodyRequest = objectMapper.writeValueAsString(accountHolder);
-        MvcResult result = mockMvc.perform(post("/create-accountHolder")
-                .content(bodyRequest).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated()).andReturn();
-    }
-
-
-    @Test
-    public void createSavingsTest() throws Exception {
-        Address address = new Address("Carrer de Julia Portet", "Barcelona","08002");
-        AccountHolder accountHolder = accountHolderRepository.save(new AccountHolder("Omar", "password",
-                address,  LocalDate.of(1993, 7, 26)));
-        Savings savings = new Savings(new BigDecimal(500), accountHolder, "secretKey");
-        String bodyRequest = objectMapper.writeValueAsString(savings);
-    }
-
-    @Test
-    public void deleteAccount() throws Exception {
-        Address address = new Address("Carrer de Julia Portet", "Barcelona","08002");
-        AccountHolder accountHolder = new AccountHolder("Omar", "password",
-                address,  LocalDate.of(1993, 7, 26));
-        CreditCard creditCard = new CreditCard(BigDecimal.valueOf(500.00),accountHolder,"secretKey");
-    }
-
-    @Test
-    public void createCreditCardTest() throws Exception {
-        Address address = new Address("Carrer de Julia Portet", "Barcelona","08002");
-        AccountHolder accountHolder = accountHolderRepository.save(new AccountHolder("Omar", "password",
-                address,  LocalDate.of(1993, 7, 26)));
-        String body = objectMapper.writeValueAsString(accountHolder);
     }
 
 }

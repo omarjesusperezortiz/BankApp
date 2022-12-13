@@ -28,13 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 @SpringBootApplication
-@RestController
 public class BankProjectIronhackApplication {
-
-	@Autowired
-	AccountRepository accountRepository;
-	@Autowired
-	ThirdPartyRepository thirdPartyRepository;
 
 public static void main(String[] args) {
 		SpringApplication.run(BankProjectIronhackApplication.class, args);
