@@ -10,6 +10,8 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
+import org.jetbrains.annotations.Contract;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,12 +26,14 @@ public class AccountHolder extends User{
     private LocalDate dateOfBirth;
 
     //Colocamos Listas de cuentas para poder visualizar los balances por AccountHolder
-    @OneToMany
+    @OneToMany (mappedBy = "primaryOwner", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Account> primaryAccountList = new ArrayList<>();
-    @OneToMany
+
+    @OneToMany (mappedBy = "secondaryOwner", fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Account> secondaryAccountList = new ArrayList<>();
+
 
 
 

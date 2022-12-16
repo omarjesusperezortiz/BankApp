@@ -39,48 +39,45 @@ public class AdminService {
     @Autowired
     AdminRepository adminRepository;
 
+
+    //CREATE ACCOUNT BUSINESS LOGIC
     public Account createChecking(Checking checking) {
-        if(accountHolderRepository.findById(checking.getId()).isPresent()) {
             Period checkAge = Period.between(checking.getPrimaryOwner().getDateOfBirth(), LocalDate.now());
             if (checkAge.getYears() < 24) {
-                StudentChecking studentCheck =
+                StudentChecking studentChecking =
                         new StudentChecking(checking.getBalance(),
                                 checking.getSecretKey(),
                                 checking.getPrimaryOwner());
-                return accountRepository.save(studentCheck);
+                return accountRepository.save(studentChecking);
             } else {
                 return accountRepository.save(checking);
             }
         }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id not found");
-    }
-    public Account createSavings(AccountHolder user, BigDecimal balance, String secretKey) {
-        return accountRepository.save(new Savings(balance, user, secretKey));
+
+    public Account createSavings(Savings savings) {
+        return accountRepository.save(savings);
     }
 
     public Account createCreditCard(CreditCard creditCard) {
-        if(accountHolderRepository.findById(creditCard.getPrimaryOwner().getId()).isPresent()) {
-            accountRepository.save(creditCard);
-            return creditCard;
-        }
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Id not found");
+            return accountRepository.save(creditCard);
     }
 
+    //CREATE USERS LOGIC
     public AccountHolder createAccountHolder(AccountHolder accountHolder) {
-        accountHolderRepository.save(accountHolder);
-        return accountHolder;
+        return accountHolderRepository.save(accountHolder);
     }
 
 //    WORKS
     public ThirdParty createThirdParty(ThirdParty thirdParty) {
-
         return thirdPartyRepository.save(thirdParty);
     }
 
-    public void  modifyBalance(Long accountId, BigDecimal balance){
+    public void modifyBalance(Long accountId, BigDecimal balance){
         if(accountRepository.findById(accountId).isPresent()){
 
-         accountRepository.findById(accountId).get().setBalance(balance);
+            Account accountModified = accountRepository.findById(accountId).get();
+            accountModified.setBalance(balance);
+            accountRepository.save(accountModified);
 
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This account doesn't exist");
@@ -90,6 +87,15 @@ public class AdminService {
     public void deleteAccount(Long accountId) {
         if(accountRepository.findById(accountId).isPresent()){
             accountRepository.deleteById(accountId);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This account doesn't exist");
+        }
+    }
+
+    //UN ADMIN NO PUEDE BORRAR A OTRO ADMIN POR LO QUE LA LOGICA APLICA SOLO A ACCOUNT HOLDERS Y THIRDPARTIES
+    public void deleteUser(Long userId) {
+        if(accountHolderRepository.findById(userId).isPresent()){
+            accountHolderRepository.deleteById(userId);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "This account doesn't exist");
         }
